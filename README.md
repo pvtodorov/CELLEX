@@ -6,7 +6,7 @@ CELLEX (CELL-type EXpression-specificity) is a tool for computing cell-type Expr
 
 See [Timshel (bioRxiv, 2020): Mapping heritability of obesity by cell types](https://www.biorxiv.org/content/10.1101/2020.01.27.920033v1) for further details on the CELLEX method. See also the [CELLEX Wiki](https://github.com/perslab/CELLEX/wiki).
 
-# Quick start
+# Quick start  
 This brief tutorial  showcases the core features of CELLEX.
 
 ## Setup
