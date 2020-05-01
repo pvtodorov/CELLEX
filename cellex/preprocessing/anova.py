@@ -1,10 +1,8 @@
 import numpy as np
-import multiprocessing as mp
 import pandas as pd
 import time
 import datetime
 from scipy import stats
-import resource
 
 def anova(df: pd.DataFrame, annotation: np.ndarray, threshold: np.float=0.00001, verbose: bool=False):
     """Apply ANOVA and filter data
@@ -62,25 +60,12 @@ def anova(df: pd.DataFrame, annotation: np.ndarray, threshold: np.float=0.00001,
     # for i in range(len(df.values)) iterates over genes (rows)
     # *[df[i,g] for g in idx] splits expression values for 
     # one gene into groups according to the annotation
-    current_mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss #in kb
-    max_mem = 2e9 #in kb
-    max_usage = 0.50
-    nprocs = int((max_mem * max_usage) / current_mem)
-    if nprocs == 0:
-        nprocs = 1
-    elif nprocs > (mp.cpu_count()*0.5):
-        nprocs = int(mp.cpu_count()*0.5)
-    import pdb; pdb.set_trace();
-    with mp.Pool(processes=nprocs) as pool:
-        args = [[df.values[i,g] for g in idx] for i in range(len(df.values))]
-        result = pool.starmap(func=stats.f_oneway, iterable=args)
+    anova_results = [stats.f_oneway(*[df.values[i,g] for g in idx]) for i in range(len(df.values))]
     ### Create dataframe for ANOVA results
-    f = np.array(result)
-    
+    f = np.array(anova_results)
     df_anova = pd.DataFrame({"statistic": f[:,0], 
                          "pvalue": f[:,1]}, 
                         index=df.index)
-
     ### Filter original dataframe
     # Get row-index of genes where pvalue < threshold
     idx_thresh = (df_anova.values[:,1] < threshold)
