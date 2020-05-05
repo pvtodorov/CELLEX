@@ -3,6 +3,7 @@ import pandas as pd
 import time
 import datetime
 from scipy import stats
+from tqdm import tqdm
 
 def anova(df: pd.DataFrame, annotation: np.ndarray, threshold: np.float=0.00001, verbose: bool=False):
     """Apply ANOVA and filter data
@@ -60,7 +61,7 @@ def anova(df: pd.DataFrame, annotation: np.ndarray, threshold: np.float=0.00001,
     # for i in range(len(df.values)) iterates over genes (rows)
     # *[df[i,g] for g in idx] splits expression values for 
     # one gene into groups according to the annotation
-    anova_results = [stats.f_oneway(*[df.values[i,g] for g in idx]) for i in range(len(df.values))]
+    anova_results = [stats.f_oneway(*[df.values[i,g] for g in idx]) for i in tqdm(range(len(df.values)))]
     ### Create dataframe for ANOVA results
     f = np.array(anova_results)
     df_anova = pd.DataFrame({"statistic": f[:,0], 
